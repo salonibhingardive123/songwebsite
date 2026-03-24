@@ -1,0 +1,97 @@
+
+Saloni Bhingardive
+12:11 AM (26 minutes ago)
+to me
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Song Reviews</title>
+</head>
+<body>
+
+<h2>Add Review</h2>
+
+<input id="song" placeholder="Song name"><br><br>
+
+<label>Lyrics</label>
+<input type="range" id="lyrics" min="0" max="10"><br>
+
+<label>Vocals</label>
+<input type="range" id="vocals" min="0" max="10"><br>
+
+<label>Composition</label>
+<input type="range" id="composition" min="0" max="10"><br>
+
+<label>Melody</label>
+<input type="range" id="melody" min="0" max="10"><br>
+
+<label>Music</label>
+<input type="range" id="music" min="0" max="10"><br><br>
+
+<button onclick="submitReview()">Submit</button>
+
+<h2>Latest Reviews</h2>
+<button onclick="getReviews()">Load Reviews</button>
+
+<pre id="output"></pre>
+
+<script>
+/*
+Replace this with your Application Gateway Public IP
+Example:
+const API = "http://20.204.xxx.xxx";
+*/
+const API = "http://20.31.83.206";
+
+async function submitReview() {
+  const data = {
+    songName: document.getElementById("song").value,
+    lyrics: +document.getElementById("lyrics").value,
+    vocals: +document.getElementById("vocals").value,
+    composition: +document.getElementById("composition").value,
+    melody: +document.getElementById("melody").value,
+    music: +document.getElementById("music").value
+  };
+
+  try {
+    const res = await fetch(API + "/reviews", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to submit review");
+    }
+
+    alert("Review added!");
+  } catch (err) {
+    alert("Error: " + err.message);
+  }
+}
+
+async function getReviews() {
+  try {
+    const res = await fetch(API + "/reviews");
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch reviews");
+    }
+
+    const data = await res.json();
+
+    document.getElementById("output").innerText =
+      JSON.stringify(data, null, 2);
+
+  } catch (err) {
+    document.getElementById("output").innerText =
+      "Error: " + err.message;
+  }
+}
+</script>
+
+</body>
+</html>
