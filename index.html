@@ -66,7 +66,7 @@
 
 <div class="container">
 
-  <h2>🎵 Add Review</h2>
+  <h2>Add Review</h2>
 
   <input id="song" placeholder="Song name">
 
@@ -128,7 +128,7 @@ async function submitReview() {
 
     if (!res.ok) throw new Error("Failed to submit review");
 
-    alert("✅ Review added!");
+    alert("Yesss! Review added!");
   } catch (err) {
     alert("Error: " + err.message);
   }
@@ -162,7 +162,7 @@ async function getReviews() {
 
           <div class="rating-row">
             <span>Music: ${r.music}</span>
-            <span class="avg">⭐ ${r.average}</span>
+            <span class="avg"> ${r.average}</span>
           </div>
 
           <small>${new Date(r.createdAt).toLocaleString()}</small>
