@@ -1,44 +1,110 @@
-
-
 <!DOCTYPE html>
 <html>
 <head>
   <title>Song Reviews</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url("https://www.aiu.edu/wp-content/uploads/2022/09/music-1-1.jpg") no-repeat center center/cover;
+      color: white;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 40px auto;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: none;
+    }
+
+    button {
+      background: #ff7b00;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .slider-group {
+      margin-bottom: 10px;
+    }
+
+    .review-card {
+      background: white;
+      color: black;
+      padding: 15px;
+      margin-top: 10px;
+      border-radius: 10px;
+    }
+
+    .rating-row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .avg {
+      font-weight: bold;
+      color: green;
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>Add Review</h2>
+<div class="container">
 
-<input id="song" placeholder="Song name"><br><br>
+  <h2>🎵 Add Review</h2>
 
-<label>Lyrics</label>
-<input type="range" id="lyrics" min="0" max="10"><br>
+  <input id="song" placeholder="Song name">
 
-<label>Vocals</label>
-<input type="range" id="vocals" min="0" max="10"><br>
+  <div class="slider-group">
+    <label>Lyrics</label>
+    <input type="range" id="lyrics" min="0" max="10">
+  </div>
 
-<label>Composition</label>
-<input type="range" id="composition" min="0" max="10"><br>
+  <div class="slider-group">
+    <label>Vocals</label>
+    <input type="range" id="vocals" min="0" max="10">
+  </div>
 
-<label>Melody</label>
-<input type="range" id="melody" min="0" max="10"><br>
+  <div class="slider-group">
+    <label>Composition</label>
+    <input type="range" id="composition" min="0" max="10">
+  </div>
 
-<label>Music</label>
-<input type="range" id="music" min="0" max="10"><br><br>
+  <div class="slider-group">
+    <label>Melody</label>
+    <input type="range" id="melody" min="0" max="10">
+  </div>
 
-<button onclick="submitReview()">Submit</button>
+  <div class="slider-group">
+    <label>Music</label>
+    <input type="range" id="music" min="0" max="10">
+  </div>
 
-<h2>Latest Reviews</h2>
-<button onclick="getReviews()">Load Reviews</button>
+  <button onclick="submitReview()">Submit</button>
 
-<pre id="output"></pre>
+  <h2>Latest Reviews</h2>
+  <button onclick="getReviews()">Load Reviews</button>
+
+  <div id="reviews"></div>
+
+</div>
 
 <script>
-/*
-Replace this with your Application Gateway Public IP
-Example:
-const API = "http://20.204.xxx.xxx";
-*/
 const API = "https://webapp.salonibb.in";
 
 async function submitReview() {
@@ -60,11 +126,9 @@ async function submitReview() {
       body: JSON.stringify(data)
     });
 
-    if (!res.ok) {
-      throw new Error("Failed to submit review");
-    }
+    if (!res.ok) throw new Error("Failed to submit review");
 
-    alert("Review added!");
+    alert("✅ Review added!");
   } catch (err) {
     alert("Error: " + err.message);
   }
@@ -74,17 +138,40 @@ async function getReviews() {
   try {
     const res = await fetch(API + "/reviews");
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch reviews");
-    }
+    if (!res.ok) throw new Error("Failed to fetch reviews");
 
     const data = await res.json();
 
-    document.getElementById("output").innerText =
-      JSON.stringify(data, null, 2);
+    const container = document.getElementById("reviews");
+    container.innerHTML = "";
+
+    data.forEach(r => {
+      container.innerHTML += `
+        <div class="review-card">
+          <h3>${r.songName}</h3>
+
+          <div class="rating-row">
+            <span>Lyrics: ${r.lyrics}</span>
+            <span>Vocals: ${r.vocals}</span>
+          </div>
+
+          <div class="rating-row">
+            <span>Composition: ${r.composition}</span>
+            <span>Melody: ${r.melody}</span>
+          </div>
+
+          <div class="rating-row">
+            <span>Music: ${r.music}</span>
+            <span class="avg">⭐ ${r.average}</span>
+          </div>
+
+          <small>${new Date(r.createdAt).toLocaleString()}</small>
+        </div>
+      `;
+    });
 
   } catch (err) {
-    document.getElementById("output").innerText =
+    document.getElementById("reviews").innerText =
       "Error: " + err.message;
   }
 }
